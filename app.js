@@ -3,6 +3,7 @@ var ejs = require('ejs')
 	express = require('express'),
 	copy = require('./router/copy'),
 	bodyParser = require('body-parser'),
+	cookieParser = require('cookie-parser'),
 	app = express();
 
 /**
