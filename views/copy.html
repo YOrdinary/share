@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<title>分享你的硬盘</title>
+	<link rel="stylesheet" type="text/css" href="http://apps.bdimg.com/libs/bootstrap/3.3.4/css/bootstrap.css">
+</head>
+<body>
+	<div class="container projects" >
+		<div style="margin-top: 20px;"></div>
+	</div>
+	<div class="container projects" >
+		<div class="row">
+			<div class="col-md-10">
+				<input type="email" class="form-control" id="exampleInputEmail1" placeholder="input file system">
+			</div>
+			<div class="col-md-2">
+				<button  class="infolder button button-primary button-rounded button-small">进入</button>
+			</div>
+		</div>
+	</div>
+	<div class="container projects" >
+		<div style="margin-top: 20px;"></div>
+	</div>
+	<div class="container projects" >
+		<div class="row">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody data-bind="foreach: files">
+					<tr class="list">
+						<th data-bind="text : name">Name</th>
+						<th><a href="#" data-bind="attr:{href : url}" class="button button-primary button-rounded button-small">get</a></th>
+					</tr>
+				</tbody>
+				</table>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src='http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js'></script>
+<script type="text/javascript" src="/js/bootstrap.js"></script>
+<script type="text/javascript" src="/js/knockout-3.4.1.js "></script>
+<script type="text/javascript">
+	var file = '<%-file%>';
+	file = file.split(",");
+
+	var folder = '';
+
+	function ViewModel(){
+		var self = this
+		self.files = ko.observableArray()
+	}
+
+	var vm = new ViewModel();
+
+	function fileModel(f){
+		var self = this;
+		self.name = f;
+		self.url = '/copy/file?name='+folder+'/'+f;
+	}
+
+	file.forEach(function(value, index){
+		vm.files.push(new fileModel(value))
+	})
+
+	ko.applyBindings(vm);
+
+	var infolderBtn = $('.infolder');
+
+	infolderBtn.on('click', function(){
+		folder = $('input').val();
+		console.log(folder)
+		$.ajax({
+			type:'put',
+			url:'/copy',
+			data:{
+				folder:folder
+			},
+			success:function(data){
+				$('.list').remove();
+				data.file.forEach(function(value){
+					vm.files.push(new fileModel(value));
+				})
+			}
+		})
+	})
+
+</script>
+</html>
